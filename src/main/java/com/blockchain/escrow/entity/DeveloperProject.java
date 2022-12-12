@@ -1,16 +1,13 @@
 package com.blockchain.escrow.entity;
-
 import java.io.Serializable;
-import java.util.Set;
 
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,19 +17,21 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Accessors(chain = true)
 @Entity
-@Table(name = "project")
-public class Project implements Serializable{
+@Table(name = "developer_project")
+public class DeveloperProject implements Serializable{
     private static final long serialVersionUID = -4650977692338418463L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String address;
-    private String projectName;
+    private String status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    Client client;
+    @ManyToOne
+    @JoinColumn(name = "developer_id")
+    private Developer developer;
 
-    @OneToMany(mappedBy="project")
-    private Set<DeveloperProject> developerProject;
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    private Project project;
+
 }

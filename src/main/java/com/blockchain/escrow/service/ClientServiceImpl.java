@@ -3,6 +3,8 @@ package com.blockchain.escrow.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,7 +31,8 @@ public class ClientServiceImpl implements ClientService{
         }
         Client client = new Client();
         client.setClientName(clientDto.getClientName())
-        .setPhoneNumber(clientDto.getPhoneNumber());
+              .setPhoneNumber(clientDto.getPhoneNumber())
+              .setAddress(clientDto.getAddress());
         clientRepository.save(client);
         clientDto = modelMapper.map(client, ClientDto.class);
         return clientDto;
@@ -42,6 +45,13 @@ public class ClientServiceImpl implements ClientService{
             return clients.stream().map(client -> modelMapper.map(client, ClientDto.class)).collect(Collectors.toList());
         }
         return null;
+    }
+
+    @Override
+    @Transactional
+    public Client getClientById(Integer id) {
+        return clientRepository.findById(id).orElseThrow(
+            () -> new AppException("Client Not found", HttpStatus.BAD_REQUEST));
     }
 
 }

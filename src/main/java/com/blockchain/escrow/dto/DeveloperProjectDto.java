@@ -8,9 +8,9 @@ import lombok.experimental.Accessors;
 @Data
 @JsonInclude(value = Include.NON_NULL)
 @Accessors(chain = true)
-public class ClientDto {
+public class DeveloperProjectDto {
     private Integer id;
-    private String clientName;
-    private String phoneNumber;
-    private String address;
+    private String status;
+    private ProjectDto project;
+    private DeveloperDto developer;
 }

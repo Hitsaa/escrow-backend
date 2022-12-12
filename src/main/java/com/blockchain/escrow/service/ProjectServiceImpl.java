@@ -1,9 +1,9 @@
 package com.blockchain.escrow.service;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.transaction.Transactional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import com.blockchain.escrow.dto.ProjectDto;
 import com.blockchain.escrow.entity.Client;
 import com.blockchain.escrow.entity.Project;
-import com.blockchain.escrow.repository.ClientRepository;
 import com.blockchain.escrow.repository.ProjectRepository;
 import com.blockchain.escrow.utils.exceptions.AppException;
 
@@ -26,14 +25,12 @@ public class ProjectServiceImpl implements ProjectService {
     @Autowired
     ProjectRepository projectRepository;
 
-    private final ClientRepository clientRepository;
-    public ProjectServiceImpl(ClientRepository clientRepository) {
-        this.clientRepository = clientRepository;
-    }
+    @Autowired
+    ClientService clientService;
     
     @Override
     public ProjectDto createProject(ProjectDto projectDto) {
-        Client client = this.getClientById(projectDto.getClientId());
+        Client client = clientService.getClientById(projectDto.getClientId());
         
         if(projectRepository.findByAddress(projectDto.getAddress()) != null) {
             throw new AppException("Address already exist", HttpStatus.BAD_REQUEST);
@@ -51,14 +48,16 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public List<ProjectDto> getProjectsByClientId(Integer id) {
-        Client client = this.getClientById(id);
+        Client client = clientService.getClientById(id);
         List<Project> projectList = projectRepository.findByClient(client);
         return  projectList.stream().map(project -> modelMapper.map(project, ProjectDto.class)).collect(Collectors.toList());
     }
 
-    private Client getClientById(Integer id) {
-        return clientRepository.findById(id).orElseThrow(
-            () -> new AppException("Client Not found", HttpStatus.BAD_REQUEST));
+    @Override
+    @Transactional
+    public Project getProjectById(Integer id) {
+        return projectRepository.findById(id).orElseThrow(
+            () -> new AppException("Project Not found by given project id", HttpStatus.BAD_REQUEST));
     }
 
 }

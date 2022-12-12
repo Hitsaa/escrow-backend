@@ -1,5 +1,4 @@
 package com.blockchain.escrow.controller;
-
 import java.util.List;
 
 import javax.validation.Valid;
@@ -14,34 +13,32 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.blockchain.escrow.dto.ClientDto;
+import com.blockchain.escrow.dto.DeveloperDto;
 import com.blockchain.escrow.dto.ProjectDto;
 import com.blockchain.escrow.service.ClientService;
+import com.blockchain.escrow.service.DeveloperService;
 import com.blockchain.escrow.service.ProjectService;
 
 
 @RestController
-@RequestMapping("/api/escrow-app/client")
-public class ClientController {
+@RequestMapping("/api/escrow-app/developer")
+public class DeveloperController {
     @Autowired
-    ClientService clientService;
+    DeveloperService developerService;
 
     final ProjectService projectService;
-    ClientController(ProjectService projectService) {
+    DeveloperController(ProjectService projectService) {
         this.projectService = projectService;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ClientDto> registerClient(@Valid @RequestBody ClientDto clientDto) {
-        return ResponseEntity.ok(clientService.registerClient(clientDto));
+    public ResponseEntity<DeveloperDto> registerDeveloper(@Valid @RequestBody DeveloperDto developerDto) {
+        return ResponseEntity.ok(developerService.registerDeveloper(developerDto));
     }
 
     @GetMapping("/list/all")
-    public ResponseEntity<List<ClientDto>> getAllClients() {
-        return ResponseEntity.ok(clientService.getAllClients());
+    public ResponseEntity<List<DeveloperDto>> getAllDevelopers() {
+        return ResponseEntity.ok(developerService.getAllDevelopers());
     }
 
-    @GetMapping(value="project/{id}")
-    public ResponseEntity<List<ProjectDto>> getProjectsByClientId(@PathVariable(value = "id") Integer id) {
-        return ResponseEntity.ok(projectService.getProjectsByClientId(id));
-    }
 }
